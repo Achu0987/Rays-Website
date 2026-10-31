@@ -1,0 +1,1189 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — EXPLORATION ONLY (docs/DESIGN.md "Proposed tokens").
+ * Not locked until a concept is approved by Ray.
+ * Typography is intentionally unset: no display/body font is chosen yet.
+ */
+:root {
+  --color-bg: #0b0d12;
+  --color-raised: #151923;
+  --color-text: #f2f0ea;
+  --color-muted: #a8aab3;
+  --color-accent: #a3b8ff;
+
+  --duration-micro: 200ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-raised: var(--color-raised);
+  --color-text: var(--color-text);
+  --color-muted: var(--color-muted);
+  --color-accent: var(--color-accent);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Intro: loading dial and entrance ---------- */
+.intro {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #0a0b0e;
+  color: var(--color-text);
+}
+.intro.phase-ready {
+  cursor: pointer;
+}
+.intro-canvas {
+  position: absolute !important;
+  inset: 0;
+  animation: intro-in 1600ms var(--ease-standard) both;
+}
+@keyframes intro-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.intro-mark {
+  position: absolute;
+  top: 28px;
+  left: clamp(16px, 2.6vw, 40px);
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  opacity: 0.85;
+}
+
+/* The invitation sits at the centre of the dial. */
+.intro-invite {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 700ms var(--ease-standard);
+  pointer-events: none;
+}
+.phase-ready .intro-invite {
+  opacity: 1;
+  pointer-events: auto;
+}
+.intro-enter {
+  padding: 14px 28px;
+  border: 0;
+  background: none;
+  color: #f2ead9;
+  font: inherit;
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition:
+    color var(--duration-micro) var(--ease-standard),
+    transform var(--duration-micro) var(--ease-standard);
+  animation: intro-breathe 2.9s ease-in-out infinite;
+}
+.intro-enter:hover {
+  color: #d39a4e;
+}
+.intro-enter:active {
+  transform: scale(0.97);
+}
+@keyframes intro-breathe {
+  50% {
+    opacity: 0.62;
+  }
+}
+.intro-hint {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+}
+
+/* ---------- Hand-over from the intro to the world ---------- */
+.experience .intro {
+  z-index: 30;
+  transition: opacity 1000ms var(--ease-standard);
+}
+.stage-crossing .intro {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- The world ---------- */
+.world {
+  --night: #0d0a09;
+  --ink: #f1ece2;
+  --dim: #9eb3b4;
+  --teal: #7ce8dc;
+  --amber: #d39a4e;
+  position: relative;
+  min-height: 100svh;
+  color: var(--ink);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  background: var(--night);
+}
+.world-canvas {
+  position: fixed !important;
+  inset: 0;
+  z-index: 0;
+  animation: world-in 1400ms var(--ease-standard) both;
+}
+@keyframes world-in {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+  }
+}
+.world main {
+  position: relative;
+  z-index: 1;
+}
+
+.world-nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px clamp(16px, 2.6vw, 40px);
+}
+.world-mark {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  padding: 13px 26px;
+  border: 1px solid rgb(124 232 220 / 0.28);
+  border-radius: 999px;
+  background: rgb(8 18 22 / 0.42);
+  backdrop-filter: blur(14px) saturate(140%);
+  box-shadow:
+    inset 0 0 18px rgb(124 232 220 / 0.08),
+    0 8px 40px rgb(124 232 220 / 0.08);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.pill a,
+a.pill {
+  color: var(--ink);
+  text-decoration: none;
+  transition: color var(--duration-micro) var(--ease-standard);
+}
+.pill a:hover,
+a.pill:hover {
+  color: var(--teal);
+}
+.pill-line {
+  width: 46px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--teal), transparent);
+}
+
+.world section {
+  position: relative;
+}
+
+
+
+
+
+@media (max-width: 767px), (orientation: portrait) {
+  .pill {
+    padding: 11px 18px;
+    gap: 12px;
+  }
+  .pill-line {
+    width: 24px;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+
+/* ---------- Part two: the warm compass room ---------- */
+.edge-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  transition: opacity 300ms linear;
+}
+.edge-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 210deg at 50% 50%, #ff2e7e, #ffb03a, #f4ff5a, #3dffa8, #2fd7ff, #7a5cff, #ff2e7e);
+  /* Only a soft band along the four edges shows the colour. */
+  -webkit-mask:
+    linear-gradient(90deg, #000, transparent var(--band), transparent calc(100% - var(--band)), #000),
+    linear-gradient(180deg, #000, transparent var(--band), transparent calc(100% - var(--band)), #000);
+  mask:
+    linear-gradient(90deg, #000, transparent var(--band), transparent calc(100% - var(--band)), #000),
+    linear-gradient(180deg, #000, transparent var(--band), transparent calc(100% - var(--band)), #000);
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+  filter: blur(10px);
+  opacity: 0.42;
+}
+.edge-glow {
+  --band: 30px;
+}
+
+.k-section {
+  position: relative;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  color: #f5e9db;
+}
+.k-hero {
+  height: 230svh;
+}
+.k-open {
+  height: 170svh;
+}
+.k-ghost {
+  height: 140svh;
+}
+.k-cards {
+  height: 480svh;
+}
+.k-pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  padding: 0 clamp(16px, 2.6vw, 40px);
+  box-sizing: border-box;
+}
+
+.k-title-wrap {
+  position: absolute;
+  top: 11svh;
+  left: 50%;
+  translate: -50% 0;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+}
+.k-title {
+  margin: 0;
+  font-size: clamp(3rem, 8.4vw, 9rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  color: #f6e6d2;
+}
+.k-star {
+  font-size: 0.38em;
+  vertical-align: top;
+  color: #f6e6d2;
+}
+.k-label {
+  margin: 10px 0 0;
+  text-align: right;
+  font-size: clamp(1rem, 1.5vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #e0631f;
+}
+.k-hint {
+  position: absolute;
+  left: clamp(16px, 2.6vw, 40px);
+  bottom: 9svh;
+  margin: 0;
+  max-width: 14rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgb(245 233 219 / 0.55);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.k-footnote {
+  position: absolute;
+  right: clamp(16px, 2.6vw, 40px);
+  bottom: 9svh;
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Words blur and rise into place, one after another. */
+.k-words span {
+  display: inline-block;
+  filter: blur(14px);
+  opacity: 0;
+  translate: 0 0.25em;
+  transition:
+    filter 900ms var(--ease-standard),
+    opacity 900ms var(--ease-standard),
+    translate 900ms var(--ease-standard);
+  transition-delay: calc(var(--i) * 110ms);
+}
+.in .k-words span,
+.k-reveal.in .k-words span {
+  filter: blur(0);
+  opacity: 1;
+  translate: 0 0;
+}
+
+.k-statement {
+  position: absolute;
+  left: 50%;
+  bottom: 12svh;
+  translate: -50% 0;
+  margin: 0;
+  width: min(92vw, 60rem);
+  text-align: center;
+  font-size: clamp(1.8rem, 4.2vw, 4.4rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.k-ghost-word {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  font-size: clamp(4rem, 15vw, 16rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: rgb(255 236 214 / 0.09);
+}
+
+.k-cards-pin {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4svh;
+}
+.k-cards-title {
+  margin: 0;
+  font-size: clamp(2rem, 4.4vw, 4.6rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  padding-left: clamp(0px, 30vw, 520px);
+}
+.k-card {
+  flex: 0 0 auto;
+  width: clamp(280px, 34vw, 520px);
+  height: clamp(320px, 52svh, 520px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 30px 32px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(120% 90% at 20% 0%, rgb(255 190 120 / 0.14), transparent 60%),
+    var(--tone);
+}
+.k-card h3 {
+  margin: 0;
+  font-size: clamp(2.2rem, 3.6vw, 3.9rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: #fbecd9;
+}
+.k-card p {
+  margin: 0;
+  max-width: 24rem;
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  color: rgb(251 236 217 / 0.82);
+}
+
+
+@media (max-width: 767px), (orientation: portrait) {
+  .edge-glow {
+    --band: 14px;
+  }
+  .pill a[href="#compass"],
+  .pill a[href="#compass"] + .pill-line {
+    display: none;
+  }
+  .k-title-wrap {
+    top: 13svh;
+  }
+  .k-title {
+    font-size: clamp(2.6rem, 13vw, 4rem);
+    text-align: center;
+  }
+  .k-hint {
+    display: none;
+  }
+  .k-cards-title {
+    padding-left: 0;
+  }
+  .k-card {
+    width: 78vw;
+    height: 46svh;
+  }
+}
+
+/* Without WebGL: the warm sections read as a plain page. */
+.world.is-static .k-section {
+  height: auto;
+}
+.world.is-static .k-pin {
+  position: relative;
+  height: auto;
+  min-height: 70svh;
+  overflow: visible;
+}
+
+/* ---------- The welcome: lands in the column of light, then the light floods the screen ---------- */
+.intro-welcome {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1.4vw;
+  pointer-events: none;
+  text-align: center;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  color: #fff6ea;
+  visibility: hidden;
+}
+.phase-entering .intro-welcome,
+.phase-entered .intro-welcome {
+  visibility: visible;
+}
+.intro-welcome-small,
+.intro-welcome-line {
+  margin: 0;
+  font-size: clamp(0.8rem, 1.2vw, 1.15rem);
+  font-weight: 600;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  opacity: 0;
+}
+.intro-welcome-line {
+  color: #e7a35b;
+  letter-spacing: 0.32em;
+}
+.intro-welcome-big {
+  margin: 0;
+  display: flex;
+  font-size: clamp(3.2rem, 14.5vw, 15rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+  white-space: nowrap;
+}
+.intro-welcome-big span {
+  display: inline-block;
+  opacity: 0;
+  background: linear-gradient(100deg, #fff6ea 0%, #fff6ea 40%, #ffffff 48%, #ffd49a 52%, #fff6ea 60%, #fff6ea 100%);
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 60px rgb(255 190 110 / 0.35);
+}
+/* Each letter falls out of the light: from huge, blurred and bright to sharp and set. */
+.phase-entering .intro-welcome-big span,
+.phase-entered .intro-welcome-big span {
+  animation:
+    letter-in 650ms cubic-bezier(0.16, 1, 0.3, 1) both,
+    letter-sheen 1400ms ease-in-out 1300ms both;
+  animation-delay: calc(250ms + var(--i) * 40ms), 1300ms;
+}
+/* A quick, clean reveal: each letter rises a little into place. */
+@keyframes letter-in {
+  0% {
+    opacity: 0;
+    transform: translateY(0.28em);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes letter-sheen {
+  from {
+    opacity: 1;
+    background-position: 100% 0;
+  }
+  to {
+    opacity: 1;
+    background-position: 0% 0;
+  }
+}
+.phase-entering .intro-welcome-small,
+.phase-entered .intro-welcome-small {
+  animation: welcome-line 600ms var(--ease-standard) 150ms both;
+}
+.phase-entering .intro-welcome-line,
+.phase-entered .intro-welcome-line {
+  animation: welcome-line 600ms var(--ease-standard) 900ms both;
+}
+@keyframes welcome-line {
+  from {
+    opacity: 0;
+    letter-spacing: 1.2em;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/* The whole welcome pushes slowly towards the viewer while it holds. */
+.phase-entering .intro-welcome,
+.phase-entered .intro-welcome {
+  animation: welcome-push 4300ms cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+@keyframes welcome-push {
+  from {
+    transform: scale(0.94);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+/* Then the light floods the screen and the world opens behind it. */
+.intro-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 50%, #fffaf2 0%, #ffe2b8 18%, #e9a25e 42%, rgb(201 115 46 / 0) 70%);
+  transform-origin: 50% 50%;
+}
+.phase-entering .intro-flash {
+  animation: flash-in 900ms ease-in 3500ms both;
+}
+.phase-entered .intro-flash {
+  opacity: 1;
+  transform: scale(3.2);
+}
+@keyframes flash-in {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  to {
+    opacity: 1;
+    transform: scale(3.2);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-welcome-big span,
+  .intro-welcome-small,
+  .intro-welcome-line {
+    opacity: 1;
+    animation: none !important;
+  }
+  .intro-flash {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .intro-welcome-big {
+    font-size: 12.4vw;
+  }
+  .intro-welcome-small,
+  .intro-welcome-line {
+    letter-spacing: 0.28em;
+    font-size: 0.72rem;
+  }
+}
+
+/* ---------- The six pillars as a 3D carousel, turned by the scroll ---------- */
+.k-cards {
+  height: 520svh;
+}
+.k-cards-pin {
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 12svh;
+  perspective: 1600px;
+  perspective-origin: 50% 40%;
+}
+.k-cards-title {
+  padding-left: 0;
+  text-align: center;
+}
+.k-ring {
+  --card-w: clamp(260px, 28vw, 420px);
+  --radius: calc(var(--card-w) * 1.55);
+  position: relative;
+  width: var(--card-w);
+  height: clamp(300px, 50svh, 500px);
+  margin: 6svh auto 0;
+  padding: 0;
+  list-style: none;
+  transform-style: preserve-3d;
+  transform: translateZ(calc(var(--radius) * -0.7)) rotateX(-7deg) rotateY(var(--turn, 0deg));
+}
+.k-ring .k-card {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  backface-visibility: hidden;
+  transform: rotateY(calc(var(--i) * 360deg / var(--count))) translateZ(var(--radius));
+  /* Cards turned away sink into the dark; the one facing you is lit. */
+  filter: brightness(calc(0.35 + 0.65 * max(var(--facing, 1), 0))) blur(calc((1 - var(--facing, 1)) * 1.6px));
+  box-shadow: 0 40px 90px rgb(0 0 0 / 0.45);
+  -webkit-box-reflect: below 14px linear-gradient(transparent 62%, rgb(0 0 0 / 0.22));
+  transition:
+    filter 300ms linear,
+    outline-color 400ms var(--ease-standard);
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+}
+.k-ring .k-card.is-front {
+  outline-color: rgb(255 214 160 / 0.35);
+}
+.k-ring .k-card h3 {
+  transition: transform 700ms var(--ease-standard);
+}
+.k-ring .k-card.is-front h3 {
+  transform: translateY(-4px);
+}
+@media (max-width: 767px), (orientation: portrait) {
+  .k-ring {
+    --card-w: 64vw;
+    height: 44svh;
+  }
+  .k-cards-pin {
+    perspective: 900px;
+  }
+}
+
+/* ---------- Footer: Ray between the two halves of his name ---------- */
+.f-footer {
+  --rise: 0;
+  position: relative;
+  z-index: 6;
+  overflow: hidden;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 19svh clamp(16px, 2.6vw, 40px) 28px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(70% 60% at 50% 100%, rgb(214 120 50 / 0.42), transparent 70%),
+    radial-gradient(40% 40% at 12% 10%, rgb(120 60 20 / 0.25), transparent 70%),
+    #0c0807;
+  color: #f6e6d2;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+.f-head {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.f-title {
+  margin: 0;
+  max-width: 13ch;
+  font-size: clamp(2.4rem, 5.6vw, 6rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+}
+.f-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 34px;
+  border-radius: 999px;
+  background: #f6e6d2;
+  color: #1a0f08;
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    transform 300ms var(--ease-standard),
+    background-color 300ms var(--ease-standard);
+}
+.f-cta:hover {
+  background: #e7a35b;
+  transform: translateY(-3px);
+}
+.f-cta span {
+  transition: transform 300ms var(--ease-standard);
+}
+.f-cta:hover span {
+  transform: translateX(4px);
+}
+
+.f-stage {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  min-height: 60svh;
+}
+.f-name {
+  position: absolute;
+  left: 50%;
+  margin: 0;
+  font-size: clamp(5rem, 21vw, 24rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 0.8;
+  white-space: nowrap;
+}
+/* The first name sits behind Ray, the surname in front; both part as the footer rises. */
+.f-name-back {
+  bottom: 30%;
+  z-index: 1;
+  color: rgb(246 230 210 / 0.14);
+  transform: translateX(calc(-50% - (1 - var(--rise)) * 18vw));
+}
+.f-name-front {
+  bottom: -2%;
+  z-index: 4;
+  color: transparent;
+  -webkit-text-stroke: 2px rgb(246 230 210 / 0.85);
+  transform: translateX(calc(-50% + (1 - var(--rise)) * 18vw));
+}
+.f-portrait {
+  position: relative;
+  z-index: 2;
+  height: min(78svh, 900px);
+  width: auto;
+  max-width: 90vw;
+  object-fit: contain;
+  object-position: bottom;
+  filter: grayscale(0.35) sepia(0.25) contrast(1.08) brightness(0.95);
+  transform: translateY(calc((1 - var(--rise)) * 22%)) scale(calc(0.92 + var(--rise) * 0.08));
+  transform-origin: 50% 100%;
+}
+.f-glow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 1;
+  width: min(70vw, 900px);
+  aspect-ratio: 1;
+  transform: translate(-50%, 55%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 170 90 / 0.5), transparent 65%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+/* Without a portrait yet, the name carries the stage on its own. */
+.no-photo .f-stage {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1vw;
+  padding-top: 6svh;
+}
+.no-photo .f-name {
+  position: relative;
+  left: auto;
+  bottom: auto;
+}
+.no-photo .f-name-back {
+  color: rgb(246 230 210 / 0.92);
+  transform: translateX(calc((1 - var(--rise)) * -18vw));
+}
+.no-photo .f-name-front {
+  transform: translateX(calc((1 - var(--rise)) * 18vw));
+}
+
+.f-base {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 22px;
+  font-size: 0.875rem;
+  color: rgb(246 230 210 / 0.75);
+}
+.f-base p {
+  margin: 0;
+}
+.f-base a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+.f-top {
+  border: 0;
+  background: none;
+  color: #f6e6d2;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.f-top:hover {
+  color: #e7a35b;
+}
+@media (max-width: 767px) {
+  .f-name {
+    font-size: 24vw;
+  }
+  .f-name-front {
+    -webkit-text-stroke-width: 1.2px;
+  }
+}
+.world-nav {
+  transition:
+    opacity 400ms var(--ease-standard),
+    transform 400ms var(--ease-standard);
+}
+.at-footer .world-nav {
+  opacity: 0;
+  transform: translateY(-16px);
+  pointer-events: none;
+}
+
+/* ---------- Footer, compact: one headline row, the name as a single band ---------- */
+.f-footer {
+  min-height: 0;
+  padding: 72px clamp(16px, 2.6vw, 40px) 22px;
+  gap: 28px;
+}
+.f-head {
+  align-items: center;
+}
+.f-title {
+  max-width: none;
+  font-size: clamp(1.8rem, 3.2vw, 3.4rem);
+}
+.f-cta {
+  padding: 15px 26px;
+  font-size: 1rem;
+}
+.f-stage,
+.no-photo .f-stage {
+  min-height: 0;
+  padding-top: 0;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2.4vw;
+}
+.f-name {
+  font-size: clamp(3rem, 10.5vw, 11rem);
+  line-height: 0.82;
+}
+.f-portrait {
+  height: min(46svh, 520px);
+}
+.f-glow {
+  width: min(50vw, 640px);
+}
+.f-base {
+  padding-top: 14px;
+  border-top: 1px solid rgb(246 230 210 / 0.14);
+}
+@media (max-width: 767px) {
+  .f-footer {
+    padding-top: 56px;
+  }
+  .f-stage,
+  .no-photo .f-stage {
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .f-name {
+    font-size: 19vw;
+  }
+}
+
+/* ---------- Footer stage with Ray's photo: RAYANSH [photo] SINGH ---------- */
+.f-footer .f-stage {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2vw;
+  min-height: 0;
+}
+.f-footer .f-name {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  font-size: clamp(2.6rem, 7.6vw, 8.4rem);
+  line-height: 0.85;
+}
+.f-footer .f-name-back {
+  color: #f6e6d2;
+  transform: translateX(calc((1 - var(--rise)) * -14vw));
+  opacity: calc(0.25 + var(--rise) * 0.75);
+}
+.f-footer .f-name-front {
+  transform: translateX(calc((1 - var(--rise)) * 14vw));
+  opacity: calc(0.25 + var(--rise) * 0.75);
+}
+.f-window {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  width: clamp(150px, 17vw, 280px);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow:
+    0 30px 80px rgb(0 0 0 / 0.55),
+    0 0 0 1px rgb(255 214 160 / 0.22);
+  transform: rotate(calc((1 - var(--rise)) * -8deg)) scale(calc(0.86 + var(--rise) * 0.14));
+}
+.f-footer .f-portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 44% 30%;
+  filter: sepia(0.35) saturate(0.85) contrast(1.08) brightness(0.92);
+  transform: scale(calc(1.25 - var(--rise) * 0.1));
+  transition: filter 600ms var(--ease-standard);
+}
+.f-window:hover .f-portrait {
+  filter: none;
+}
+.f-window::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgb(12 8 7 / 0.55));
+  pointer-events: none;
+}
+.f-footer .f-glow {
+  bottom: 50%;
+  transform: translate(-50%, 50%);
+}
+@media (max-width: 767px) {
+  .f-footer .f-stage {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .f-footer .f-name {
+    font-size: 17vw;
+  }
+  .f-window {
+    width: 52vw;
+  }
+}
+
+/* ---------- Pillars: the room turns a light colour to match the card facing you ---------- */
+.k-cards {
+  --room: #e8dac1;
+}
+.k-cards .k-cards-pin {
+  background:
+    radial-gradient(60% 55% at 50% 58%, rgb(255 255 255 / 0.55), transparent 70%),
+    var(--room);
+  transition: background-color 900ms var(--ease-standard);
+  color: #1d1612;
+}
+.k-cards .k-cards-title {
+  color: #1d1612;
+}
+.k-ring .k-card {
+  box-shadow: 0 50px 80px -30px rgb(40 25 15 / 0.45);
+  -webkit-box-reflect: below 14px linear-gradient(transparent 70%, rgb(0 0 0 / 0.14));
+  filter: brightness(calc(0.7 + 0.3 * max(var(--facing, 1), 0))) blur(calc((1 - var(--facing, 1)) * 1.4px));
+}
+.k-ring .k-card.is-front {
+  outline-color: rgb(255 255 255 / 0.35);
+}
+/* Top bar and edge glow over the light room. */
+.world-nav,
+.world-mark,
+.edge-glow {
+  transition:
+    color 500ms var(--ease-standard),
+    opacity 500ms var(--ease-standard),
+    transform 400ms var(--ease-standard);
+}
+.on-light .world-mark {
+  color: #1d1612;
+}
+.on-light .world-nav .pill {
+  background: rgb(255 255 255 / 0.45);
+  border-color: rgb(29 22 18 / 0.18);
+  box-shadow: none;
+}
+.on-light .world-nav .pill a {
+  color: #1d1612;
+}
+.on-light .edge-glow {
+  opacity: 0;
+}
+
+/* The light room fades in once the ring starts turning and back out after the last card. */
+.k-cards .k-cards-pin {
+  position: sticky;
+  isolation: isolate;
+  background: transparent;
+  color: #f5e9db;
+  transition:
+    background-color 900ms var(--ease-standard),
+    color 600ms var(--ease-standard);
+}
+.k-cards .k-cards-pin::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60% 55% at 50% 58%, rgb(255 255 255 / 0.55), transparent 70%),
+    var(--room);
+  opacity: 0;
+  transition:
+    opacity 900ms var(--ease-standard),
+    background-color 900ms var(--ease-standard);
+}
+.k-cards.is-light .k-cards-pin::before {
+  opacity: 1;
+}
+.k-cards .k-cards-title {
+  color: #f5e9db;
+  transition: color 600ms var(--ease-standard);
+}
+.k-cards.is-light .k-cards-pin,
+.k-cards.is-light .k-cards-title {
+  color: #1d1612;
+}
+
+
+
+
+/* ---------- RAYMINDSET entrance: a gold line draws out, the letters rise out of it ---------- */
+.intro-welcome-big {
+  position: relative;
+}
+/* The line of light the word rises from. */
+.intro-welcome-big::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.06em;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, #ffd9a0 20%, #fff6ea 50%, #ffd9a0 80%, transparent);
+  box-shadow: 0 0 18px rgb(255 200 120 / 0.8);
+  transform: scaleX(0);
+  opacity: 0;
+}
+.phase-entering .intro-welcome-big::after,
+.phase-entered .intro-welcome-big::after {
+  animation: light-line 1500ms cubic-bezier(0.7, 0, 0.2, 1) 120ms both;
+}
+@keyframes light-line {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  35% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: scaleX(1.04);
+    opacity: 0;
+  }
+}
+/* Each letter rises out of the line, revealed from the top down as it climbs. */
+.phase-entering .intro-welcome-big span,
+.phase-entered .intro-welcome-big span {
+  animation:
+    letter-rise 900ms cubic-bezier(0.19, 1, 0.22, 1) backwards,
+    letter-sheen 1400ms ease-in-out 1500ms both;
+  animation-delay: calc(480ms + var(--i) * 55ms), 1500ms;
+}
+@keyframes letter-rise {
+  0% {
+    opacity: 1;
+    transform: translateY(0.9em);
+    clip-path: inset(0 0 100% 0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(-10% -10% -10% -10%);
+  }
+}
+/* The whole word settles a touch toward the viewer as it completes. */
+.phase-entering .intro-welcome-big,
+.phase-entered .intro-welcome-big {
+  animation: word-settle 1800ms cubic-bezier(0.19, 1, 0.22, 1) 450ms both;
+}
+@keyframes word-settle {
+  from {
+    transform: scale(0.94);
+  }
+  to {
+    transform: none;
+  }
+}
+.phase-entering .intro-welcome-small,
+.phase-entered .intro-welcome-small {
+  animation: welcome-line 600ms var(--ease-standard) 100ms both;
+}
+.phase-entering .intro-welcome-line,
+.phase-entered .intro-welcome-line {
+  animation: welcome-line 700ms var(--ease-standard) 1250ms both;
+}
